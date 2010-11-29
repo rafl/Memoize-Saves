@@ -173,9 +173,6 @@ your CACHE, DUMP, or REGEX.
 
 =head1 SEE ALSO
 
-perl(1)
-
 L<Memoize>
 
-
-
+=cut
