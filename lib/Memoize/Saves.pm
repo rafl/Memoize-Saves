@@ -1,6 +1,5 @@
 package Memoize::Saves;
-
-$VERSION = 0.65;
+# ABSTRACT: Plug-in module to specify which return values should be memoized
 
 $DEBUG = 0;
 
@@ -13,41 +12,41 @@ sub TIEHASH
     #
     if( $args{CACHE} )
     {
-	my %hash;
-	$args{CACHE} = [ $args{CACHE} ] unless ref $args{CACHE} eq "ARRAY";
-	foreach my $value ( @{$args{CACHE}} )
-	{
-	    $hash{$value} = 1;
-	}
-	$args{CACHE} = \%hash;
+        my %hash;
+        $args{CACHE} = [ $args{CACHE} ] unless ref $args{CACHE} eq "ARRAY";
+        foreach my $value ( @{$args{CACHE}} )
+        {
+            $hash{$value} = 1;
+        }
+        $args{CACHE} = \%hash;
     }
 
     # Convert the DUMP list to a referenced hash for quick lookup
     #
     if( $args{DUMP} )
     {
-	my %hash;
-	$args{DUMP} = [ $args{DUMP} ] unless ref $args{DUMP} eq "ARRAY";
-	foreach my $value (  @{$args{DUMP}} )
-	{
-	    $hash{$value} = 1;
-	}
-	$args{DUMP} = \%hash;
+        my %hash;
+        $args{DUMP} = [ $args{DUMP} ] unless ref $args{DUMP} eq "ARRAY";
+        foreach my $value (  @{$args{DUMP}} )
+        {
+            $hash{$value} = 1;
+        }
+        $args{DUMP} = \%hash;
     }
 
     if ($args{TIE})
     {
-	my ($module, @opts) = @{$args{TIE}};
-	my $modulefile = $module . '.pm';
-	$modulefile =~ s{::}{/}g;
-	eval { require $modulefile };
-	if ($@) {
-	    die "Memoize::Saves: Couldn't load hash tie module `$module': $@; aborting";
-	}
-	my $rc = (tie %$cache => $module, @opts);
-	unless ($rc) 	{
-	    die "Memoize::Saves: Couldn't tie hash to `$module': $@; aborting";
-	}
+        my ($module, @opts) = @{$args{TIE}};
+        my $modulefile = $module . '.pm';
+        $modulefile =~ s{::}{/}g;
+        eval { require $modulefile };
+        if ($@) {
+            die "Memoize::Saves: Couldn't load hash tie module `$module': $@; aborting";
+        }
+        my $rc = (tie %$cache => $module, @opts);
+        unless ($rc)         {
+            die "Memoize::Saves: Couldn't tie hash to `$module': $@; aborting";
+        }
     }
 
     $args{C} = $cache;
@@ -61,7 +60,7 @@ sub EXISTS
 
     if( exists $self->{C}->{$key} )
     {
-	return 1;
+        return 1;
     }
 
     return 0;
@@ -87,8 +86,8 @@ sub STORE
     if(( defined $self->{CACHE} )&&
        ( ! defined $self->{CACHE}->{$value} ))
     {
-	print "$value not in CACHE list.\n" if $DEBUG;
-	return;
+        print "$value not in CACHE list.\n" if $DEBUG;
+        return;
     }
 
     # If DUMP is defined and this is in our list don't save it
@@ -96,8 +95,8 @@ sub STORE
     if(( defined $self->{DUMP} )&&
        ( defined $self->{DUMP}->{$value} ))
     {
-	print "$value in DUMP list.\n" if $DEBUG;
-	return;
+        print "$value in DUMP list.\n" if $DEBUG;
+        return;
     }
 
     # If REGEX is defined we will store it only if its true
@@ -105,8 +104,8 @@ sub STORE
     if(( defined $self->{REGEX} )&&
        ( $value !~ /$self->{REGEX}/ ))
     {
-	print "$value did not match regex.\n" if $DEBUG;
-	return;
+        print "$value did not match regex.\n" if $DEBUG;
+        return;
     }
 
     # If we get this far we should save the value
@@ -117,12 +116,6 @@ sub STORE
 
 1;
 
-# Documentation
-#
-
-=head1 NAME
-
-Memoize::Saves - Plug-in module to specify which return values should be memoized
 
 =head1 SYNOPSIS
 
@@ -131,10 +124,10 @@ Memoize::Saves - Plug-in module to specify which return values should be memoize
     memoize 'function',
       SCALAR_CACHE => [TIE, Memoize::Saves,
                        CACHE => [ "word1", "word2" ],
-		       DUMP  => [ "word3", "word4" ],
-		       REGEX => "Regular Expression",
-		       HASH  => $cache_hashref,
-		      ],
+                       DUMP  => [ "word3", "word4" ],
+                       REGEX => "Regular Expression",
+                       HASH  => $cache_hashref,
+                      ],
 
 =head1 DESCRIPTION
 
@@ -177,11 +170,6 @@ If you are going to use Memoize::Saves with Memoize::Expire it is
 important to use it in that order.  Memoize::Expire changes the return
 value to include expire information and it may no longer match
 your CACHE, DUMP, or REGEX.
-
-
-=head1 AUTHOR
-
-Joshua Gerth <gerth@teleport.com>
 
 =head1 SEE ALSO
 
